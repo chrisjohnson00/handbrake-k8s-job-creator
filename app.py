@@ -104,7 +104,11 @@ def create_job_object(name_suffix, input_filename, output_filename, encoding_pro
             client.V1VolumeMount(
                 mount_path="/output",
                 name="output"
-            )]
+            )],
+        resources=client.V1ResourceRequirements(
+            limits={'cpu': '3', 'memory': '1Gi'},
+            requests={'cpu': '3', 'memory': '1Gi'}
+        )
     )
     watch_volume = client.V1Volume(
         name="input",
