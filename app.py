@@ -23,7 +23,8 @@ def main():
             full_path = os.path.join(directory, filename)
             file_size = get_file_size(full_path)
             print(
-                "{} - Found '{}' and it's size is {}".format(datetime.now().strftime("%b %d %H:%M:%S"), filename, file_size),
+                "{} - Found '{}' and it's size is {}".format(datetime.now().strftime("%b %d %H:%M:%S"), filename,
+                                                             file_size),
                 flush=True)
             time.sleep(10)
             # loop until the file size stops growing
@@ -31,7 +32,8 @@ def main():
                 file_size = get_file_size(full_path)
                 time.sleep(10)
             print(
-                "{} - Moving '{}' to '{}/{}'".format(datetime.now().strftime("%b %d %H:%M:%S"), full_path, move_path, filename),
+                "{} - Moving '{}' to '{}/{}'".format(datetime.now().strftime("%b %d %H:%M:%S"), full_path, move_path,
+                                                     filename),
                 flush=True)
             shutil.move(full_path, "{}/{}".format(move_path, filename))
             file, extension = os.path.splitext(filename)
@@ -147,7 +149,8 @@ def create_job(api_instance, job, namespace):
     api_response = api_instance.create_namespaced_job(
         body=job,
         namespace=namespace)
-    print("Job created. status='%s'" % str(api_response.status))
+    print("{} - Job created. status='%s'".format(datetime.now().strftime("%b %d %H:%M:%S"), str(api_response.status)),
+          flush=True)
 
 
 if __name__ == '__main__':
