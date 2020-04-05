@@ -29,6 +29,9 @@ def main():
             time.sleep(10)
             # loop until the file size stops growing
             while file_size != get_file_size(full_path):
+                print(
+                    "{} - File is still growing, waiting".format(datetime.now().strftime("%b %d %H:%M:%S")),
+                    flush=True)
                 file_size = get_file_size(full_path)
                 time.sleep(10)
             print(
