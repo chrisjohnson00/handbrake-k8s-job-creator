@@ -48,8 +48,7 @@ def get_container_version():
 
 
 def get_watch_path():
-    # oh merh gursh - this results in looking up a key like "handbrake-job-creator/720p/JOB_WATCH_PATH"
-    return get_config("JOB_WATCH_PATH", "{}/{}".format(CONFIG_PATH, get_quality_level()))
+    return get_config("JOB_WATCH_PATH")
 
 
 def get_move_path():
