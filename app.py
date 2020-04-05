@@ -3,7 +3,6 @@ import os
 import consul
 import time
 import shutil
-import random
 
 CONFIG_PATH = "handbrake-job-creator"
 
