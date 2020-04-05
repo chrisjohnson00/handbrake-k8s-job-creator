@@ -25,6 +25,10 @@ def get_watch_path():
     return get_config("JOB_WATCH_PATH", "{}/{}".format(CONFIG_PATH, get_quality_level()))
 
 
+def get_input_path():
+    return get_config("JOB_INPUT_PATH")
+
+
 def get_move_path():
     return get_config("JOB_MOVE_PATH")
 
@@ -68,7 +72,7 @@ def create_job_object(name_suffix, input_filename, output_filename, encoding_pro
     watch_volume = client.V1Volume(
         name="input",
         host_path=client.V1HostPathVolumeSource(
-            path=get_watch_path()
+            path=get_input_path()
         )
     )
     move_volume = client.V1Volume(
