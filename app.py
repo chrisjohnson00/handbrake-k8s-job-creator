@@ -45,7 +45,8 @@ def main():
             output_filename = filename
             if "1080p" in filename:
                 output_filename = filename.replace('1080p', '720p')
-            job = create_job_object(job_suffix, filename, output_filename, encoding_profile)
+            # truncate the job suffix to 48 characters to not exceed the 63 character limit
+            job = create_job_object(job_suffix[:48], filename, output_filename, encoding_profile)
             batch_v1 = client.BatchV1Api()
             create_job(batch_v1, job, namespace)
         time.sleep(10)
