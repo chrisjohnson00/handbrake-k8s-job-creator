@@ -118,7 +118,7 @@ def create_job_object(name_suffix, input_filename, output_filename, encoding_pro
                 name="output"
             )],
         resources=client.V1ResourceRequirements(
-            limits={'cpu': '4', 'memory': '1Gi'},
+            limits={'cpu': '3', 'memory': '1Gi'},
             requests={'cpu': '3', 'memory': '1Gi'}
         )
     )
