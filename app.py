@@ -149,7 +149,7 @@ def create_job(api_instance, job, namespace):
     api_response = api_instance.create_namespaced_job(
         body=job,
         namespace=namespace)
-    print("{} - Job created. status='%s'".format(datetime.now().strftime("%b %d %H:%M:%S"), str(api_response.status)),
+    print("{} - Job created. status='{}'".format(datetime.now().strftime("%b %d %H:%M:%S"), str(api_response.status)),
           flush=True)
 
 
