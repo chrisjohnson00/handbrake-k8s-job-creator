@@ -3,6 +3,7 @@ import os
 import consul
 import time
 import shutil
+import re
 from datetime import datetime
 
 CONFIG_PATH = "handbrake-job-creator"
@@ -40,8 +41,8 @@ def main():
                 flush=True)
             shutil.move(full_path, "{}/{}".format(move_path, filename))
             file, extension = os.path.splitext(filename)
-            # lowercase, remove spaces and periods - @TODO change this to a regex which only allows a-z|A-Z|-
-            job_suffix = file.replace(" ", "").replace(".", "").lower()
+            # keep only word character, removing all non-word chars
+            job_suffix = re.sub(r"\W", "", file.lower(), flags=re.I)
             output_filename = filename
             if "1080p" in filename:
                 output_filename = filename.replace('1080p', '720p')
