@@ -50,6 +50,7 @@ def main():
             job = create_job_object(job_suffix[:48], filename, output_filename, encoding_profile)
             batch_v1 = client.BatchV1Api()
             create_job(batch_v1, job, namespace)
+            # @TODO move the file back if the create_job call fails
         time.sleep(10)
 
 
