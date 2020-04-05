@@ -2,6 +2,7 @@ from kubernetes import client, config
 import os
 import consul
 import time
+import shutil
 
 CONFIG_PATH = "handbrake-job-creator"
 
@@ -27,7 +28,7 @@ def main():
                 file_size = get_file_size(full_path)
                 time.sleep(10)
             print("moving '{}' to '{}/{}'".format(full_path, move_path, filename))
-            os.rename(full_path, "{}/{}".format(move_path, filename))
+            shutil.move(full_path, "{}/{}".format(move_path, filename))
             file, extension = os.path.splitext(filename)
             job_suffix = file.replace(" ", "").lower()
             output_filename = filename
