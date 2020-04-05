@@ -3,6 +3,7 @@ import os
 import consul
 import time
 import shutil
+import random
 
 CONFIG_PATH = "handbrake-job-creator"
 
@@ -85,7 +86,7 @@ def get_config(key, config_path=CONFIG_PATH):
 
 def create_job_object(name_suffix, input_filename, output_filename, encoding_profile):
     # Configureate Pod template container
-    job_name = "handbrake-job-{}".format(name_suffix)
+    job_name = "handbrake-job-{}-{}".format(name_suffix,random.randint(0, 1000))
     container = client.V1Container(
         name=job_name,
         image="chrisjohnson00/handbrakecli:{}".format(get_container_version()),
