@@ -89,7 +89,7 @@ def create_job_object(name_suffix, input_filename, output_filename, encoding_pro
     container = client.V1Container(
         name=job_name,
         image="chrisjohnson00/handbrakecli:{}".format(get_container_version()),
-        command=["'{}'".format(input_filename), "'{}'".format(output_filename), "'{}'".format(encoding_profile)],
+        command=["{}".format(input_filename), "{}".format(output_filename), "{}".format(encoding_profile)],
         volume_mounts=[
             client.V1VolumeMount(
                 mount_path="/input",
