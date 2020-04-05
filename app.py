@@ -1,6 +1,7 @@
 from kubernetes import client, config
 import os
 import consul
+import time
 
 CONFIG_PATH = "handbrake-job-creator"
 
@@ -11,9 +12,35 @@ def main():
     else:
         config.load_incluster_config()
 
-    job = create_job_object("some-file1", "thefile", "theoutfile", "encodingProfile")
-    batch_v1 = client.BatchV1Api()
-    create_job(batch_v1, job, get_namespace())
+    directory = get_watch_path()
+    move_path = get_move_path()
+    namespace = get_namespace()
+    encoding_profile = get_encoding_profile()
+    while True:
+        for filename in os.listdir(directory):
+            full_path = os.path.join(directory, filename)
+            file_size = get_file_size(full_path)
+            print("Found '{}' and it's size is {}".format(filename, file_size))
+            time.sleep(10)
+            # loop until the file size stops growing
+            while file_size != get_file_size(full_path):
+                file_size = get_file_size(full_path)
+                time.sleep(10)
+            print("moving '{}' to '{}/{}'".format(full_path, move_path, filename))
+            os.rename(full_path, "{}/{}".format(move_path, filename))
+            file, extension = os.path.splitext(filename)
+            job_suffix = file.replace(" ", "").lower()
+            output_filename = filename
+            if "1080p" in filename:
+                output_filename = filename.replace('1080p', '720p')
+            job = create_job_object(job_suffix, filename, output_filename, encoding_profile)
+            batch_v1 = client.BatchV1Api()
+            create_job(batch_v1, job, namespace)
+        time.sleep(10)
+
+
+def get_file_size(file):
+    return os.stat(file).st_size
 
 
 def get_container_version():
@@ -25,16 +52,20 @@ def get_watch_path():
     return get_config("JOB_WATCH_PATH", "{}/{}".format(CONFIG_PATH, get_quality_level()))
 
 
-def get_input_path():
-    return get_config("JOB_INPUT_PATH")
-
-
 def get_move_path():
     return get_config("JOB_MOVE_PATH")
 
 
+def get_output_path():
+    return get_config("JOB_OUTPUT_PATH")
+
+
 def get_namespace():
     return get_config("JOB_NAMESPACE")  # expected as an env value only
+
+
+def get_encoding_profile():
+    return get_config("JOB_PROFILE")  # expected as an env value only
 
 
 def get_quality_level():
@@ -72,13 +103,13 @@ def create_job_object(name_suffix, input_filename, output_filename, encoding_pro
     watch_volume = client.V1Volume(
         name="input",
         host_path=client.V1HostPathVolumeSource(
-            path=get_input_path()
+            path=get_move_path()
         )
     )
     move_volume = client.V1Volume(
         name="output",
         host_path=client.V1HostPathVolumeSource(
-            path=get_move_path()
+            path=get_output_path()
         )
     )
     # Create and configurate a spec section
