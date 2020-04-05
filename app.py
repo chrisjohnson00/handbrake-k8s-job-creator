@@ -40,7 +40,8 @@ def main():
                 flush=True)
             shutil.move(full_path, "{}/{}".format(move_path, filename))
             file, extension = os.path.splitext(filename)
-            job_suffix = file.replace(" ", "").lower()
+            # lowercase, remove spaces and periods - @TODO change this to a regex which only allows a-z|A-Z|-
+            job_suffix = file.replace(" ", "").replace(".", "").lower()
             output_filename = filename
             if "1080p" in filename:
                 output_filename = filename.replace('1080p', '720p')
