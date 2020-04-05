@@ -1,0 +1,25 @@
+image: atlassian/default-image:2
+pipelines:
+  default:
+    - step:
+        caches:
+          - docker
+        script:
+          - docker login -u chrisjohnson00 -p $DOCKER_HUB_PASSWORD
+          - docker build -t chrisjohnson00/handbrake-job-creator:$BITBUCKET_BRANCH .
+          - docker push chrisjohnson00/handbrake-job-creator:$BITBUCKET_BRANCH
+        services:
+          - docker
+  tags:
+    '*':
+      - step:
+          caches:
+            - docker
+          script:
+            - docker login -u chrisjohnson00 -p $DOCKER_HUB_PASSWORD
+            - docker build -t chrisjohnson00/handbrake-job-creator:latest .
+            - docker tag chrisjohnson00/handbrake-job-creator:latest chrisjohnson00/handbrake-job-creator:$BITBUCKET_TAG
+            - docker push chrisjohnson00/handbrake-job-creator:latest
+            - docker push chrisjohnson00/handbrake-job-creator:$BITBUCKET_TAG
+          services:
+            - docker
