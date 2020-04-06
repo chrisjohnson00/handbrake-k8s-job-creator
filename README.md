@@ -13,6 +13,9 @@ Running locally
 
 To use local config values, instead of consul, just export the config, for example `export JOB_WATCH_PATH=/mypath`
 
+## Run tests
+
+    python -m pytest
 
 @TODO
 
