@@ -117,6 +117,7 @@ def create_job_object(name_suffix, input_filename, output_filename, encoding_pro
                 mount_path="/output",
                 name="output"
             )],
+        # @TODO - make the requests/limits configuration driven
         resources=client.V1ResourceRequirements(
             limits={'cpu': '3', 'memory': '1Gi'},
             requests={'cpu': '3', 'memory': '1Gi'}
