@@ -92,6 +92,22 @@ def get_quality_level():
     return quality
 
 
+def get_job_resource_request_cpu():
+    return get_config("JOB_RESOURCE_REQUEST_CPU")
+
+
+def get_job_resource_limit_cpu():
+    return get_config("JOB_RESOURCE_LIMIT_CPU")
+
+
+def get_job_resource_request_memory():
+    return get_config("JOB_RESOURCE_REQUEST_MEMORY")
+
+
+def get_job_resource_limit_memory():
+    return get_config("JOB_RESOURCE_LIMIT_MEMORY")
+
+
 def get_config(key, config_path=CONFIG_PATH):
     if os.environ.get(key):
         return os.environ.get(key)
@@ -117,10 +133,9 @@ def create_job_object(name_suffix, input_filename, output_filename, encoding_pro
                 mount_path="/output",
                 name="output"
             )],
-        # @TODO - make the requests/limits configuration driven
         resources=client.V1ResourceRequirements(
-            limits={'cpu': '3', 'memory': '1Gi'},
-            requests={'cpu': '3', 'memory': '1Gi'}
+            limits={'cpu': get_job_resource_limit_cpu(), 'memory': get_job_resource_limit_memory()},
+            requests={'cpu': get_job_resource_request_cpu(), 'memory': get_job_resource_request_memory()}
         )
     )
     watch_volume = client.V1Volume(
