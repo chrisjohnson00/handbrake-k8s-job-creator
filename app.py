@@ -43,6 +43,8 @@ def main():
             file, extension = os.path.splitext(filename)
             job_suffix = cleanup_job_suffix(file)
             output_filename = filename
+            # @TODO make this configurable - if the 1080p job creator runs and i just want to re-encode a 1080p file
+            #  (with 1080p in the name), it will rename it to 720p
             if "1080p" in filename:
                 output_filename = filename.replace('1080p', '720p')
             # truncate the job suffix to 48 characters to not exceed the 63 character limit
