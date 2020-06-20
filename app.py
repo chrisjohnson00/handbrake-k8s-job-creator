@@ -77,6 +77,10 @@ def get_input_path():
     return get_config("JOB_INPUT_PATH")
 
 
+def get_job_type():
+    return get_config("JOB_TYPE")
+
+
 def get_namespace():
     return get_config("JOB_NAMESPACE")  # expected as an env value only
 
@@ -136,7 +140,13 @@ def create_job_object(name_suffix, input_filename, output_filename, encoding_pro
         resources=client.V1ResourceRequirements(
             limits={'cpu': get_job_resource_limit_cpu(), 'memory': get_job_resource_limit_memory()},
             requests={'cpu': get_job_resource_request_cpu(), 'memory': get_job_resource_request_memory()}
-        )
+        ),
+        env=[
+            client.V1EnvVar(
+                name="JOB_TYPE",
+                value=get_job_type()
+            )
+        ]
     )
     watch_volume = client.V1Volume(
         name="input",
