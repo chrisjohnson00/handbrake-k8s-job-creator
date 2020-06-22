@@ -24,19 +24,19 @@ def main():
             full_path = os.path.join(directory, filename)
             file_size = get_file_size(full_path)
             print(
-                "{} - Found '{}' and it's size is {}".format(datetime.now().strftime("%b %d %H:%M:%S"), filename,
+                "INFO: {} - Found '{}' and it's size is {}".format(datetime.now().strftime("%b %d %H:%M:%S"), filename,
                                                              file_size),
                 flush=True)
             time.sleep(10)
             # loop until the file size stops growing
             while file_size != get_file_size(full_path):
                 print(
-                    "{} - File is still growing, waiting".format(datetime.now().strftime("%b %d %H:%M:%S")),
+                    "INFO: {} - File is still growing, waiting".format(datetime.now().strftime("%b %d %H:%M:%S")),
                     flush=True)
                 file_size = get_file_size(full_path)
                 time.sleep(10)
             print(
-                "{} - Moving '{}' to '{}/{}'".format(datetime.now().strftime("%b %d %H:%M:%S"), full_path, move_path,
+                "INFO: {} - Moving '{}' to '{}/{}'".format(datetime.now().strftime("%b %d %H:%M:%S"), full_path, move_path,
                                                      filename),
                 flush=True)
             shutil.move(full_path, "{}/{}".format(move_path, filename))
@@ -52,6 +52,7 @@ def main():
             batch_v1 = client.BatchV1Api()
             create_job(batch_v1, job, namespace)
             # @TODO move the file back if the create_job call fails
+            print("INFO: Done with {}".format(filename), flush=True)
         time.sleep(10)
 
 
@@ -183,7 +184,7 @@ def create_job(api_instance, job, namespace):
     api_response = api_instance.create_namespaced_job(
         body=job,
         namespace=namespace)
-    print("{} - Job created. status='{}'".format(datetime.now().strftime("%b %d %H:%M:%S"), str(api_response.status)),
+    print("INFO: {} - Job created. status='{}'".format(datetime.now().strftime("%b %d %H:%M:%S"), str(api_response.status)),
           flush=True)
 
 
