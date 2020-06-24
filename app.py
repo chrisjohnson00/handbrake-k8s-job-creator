@@ -5,12 +5,14 @@ import time
 import shutil
 from datetime import datetime
 from app.utils import cleanup_job_suffix
+from prometheus_client import Gauge, start_http_server
 
 CONFIG_PATH = "handbrake-job-creator"
 
 
 def main():
     print("Starting...", flush=True)
+    start_http_server(8080)
     if os.environ.get('USE_K8S_CONFIG_FILE'):
         config.load_kube_config()
     else:
@@ -20,6 +22,7 @@ def main():
     move_path = get_move_path()
     namespace = get_namespace()
     encoding_profile = get_encoding_profile()
+    file_discovered_metrics = Gauge('handbrake_job_creator_files_in_process', 'Job Creator Found A File')
     while True:
         for filename in os.listdir(directory):
             full_path = os.path.join(directory, filename)
@@ -28,6 +31,7 @@ def main():
                 "INFO: {} - Found '{}' and it's size is {}".format(datetime.now().strftime("%b %d %H:%M:%S"), filename,
                                                                    file_size),
                 flush=True)
+            file_discovered_metrics.inc()
             time.sleep(10)
             # loop until the file size stops growing
             while file_size != get_file_size(full_path):
@@ -55,6 +59,7 @@ def main():
             create_job(batch_v1, job, namespace)
             # @TODO move the file back if the create_job call fails
             print("INFO: Done with {}".format(filename), flush=True)
+            file_discovered_metrics.dec()
         time.sleep(10)
 
 
