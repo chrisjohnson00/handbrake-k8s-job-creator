@@ -11,7 +11,7 @@ CONFIG_PATH = "handbrake-job-creator"
 
 
 def main():
-    print("Starting...", flush=True)
+    print("INFO: Starting...", flush=True)
     start_http_server(8080)
     if os.environ.get('USE_K8S_CONFIG_FILE'):
         config.load_kube_config()
