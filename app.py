@@ -122,6 +122,10 @@ def get_job_resource_limit_memory():
     return get_config("JOB_RESOURCE_LIMIT_MEMORY")
 
 
+def get_job_container_pull_policy():
+    return get_config("JOB_CONTAINER_PULL_POLICY")
+
+
 def get_config(key, config_path=CONFIG_PATH):
     if os.environ.get(key):
         return os.environ.get(key)
@@ -136,6 +140,7 @@ def create_job_object(name_suffix, input_filename, output_filename, encoding_pro
     container = client.V1Container(
         name=job_name,
         image="chrisjohnson00/handbrakecli:{}".format(get_container_version()),
+        image_pull_policy=get_job_container_pull_policy(),
         command=["./wrapper.sh", "{}".format(input_filename), "{}".format(output_filename),
                  "{}".format(encoding_profile)],
         volume_mounts=[
@@ -172,7 +177,9 @@ def create_job_object(name_suffix, input_filename, output_filename, encoding_pro
     )
     # Create and configurate a spec section
     template = client.V1PodTemplateSpec(
-        metadata=client.V1ObjectMeta(labels={"app": "handbrake-job"}),
+        metadata=client.V1ObjectMeta(labels={"app": "handbrake-job"}, annotations={"prometheus.io/scrape": "true",
+                                                                                   "prometheus.io/path": "/metrics",
+                                                                                   "prometheus.io/port": "8080"}),
         spec=client.V1PodSpec(restart_policy="Never", containers=[container], volumes=[watch_volume, move_volume]))
     # Create the specification of deployment
     spec = client.V1JobSpec(
