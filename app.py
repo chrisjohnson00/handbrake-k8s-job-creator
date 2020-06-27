@@ -22,16 +22,24 @@ def main():
     move_path = get_move_path()
     namespace = get_namespace()
     encoding_profile = get_encoding_profile()
-    file_discovered_metrics = Gauge('handbrake_job_creator_files_in_process', 'Job Creator Found A File')
+    file_discovered_metrics = Gauge('handbrake_job_creator_files_in_process', 'Job Creator Found A File',
+                                    labelnames=["type", "quality"])
+    files_to_process_metrics = Gauge('handbrake_job_creator_files_to_process', 'Job Creator Found Some Files',
+                                     labelnames=["type", "quality"])
     while True:
-        for filename in os.listdir(directory):
+        dir = os.listdir(directory)
+        files_to_process_metrics.labels(get_job_type(), get_quality_level()).set(len(dir))
+        for filename in dir:
+            # do it again to ensure we get an accurate count of files as the directory grows from the other side
+            refresh_dir = os.listdir(directory)
+            files_to_process_metrics.labels(get_job_type(), get_quality_level()).set(len(refresh_dir))
             full_path = os.path.join(directory, filename)
             file_size = get_file_size(full_path)
             print(
                 "INFO: {} - Found '{}' and it's size is {}".format(datetime.now().strftime("%b %d %H:%M:%S"), filename,
                                                                    file_size),
                 flush=True)
-            file_discovered_metrics.inc()
+            file_discovered_metrics.labels(get_job_type(), get_quality_level()).inc()
             time.sleep(10)
             # loop until the file size stops growing
             while file_size != get_file_size(full_path):
@@ -59,7 +67,7 @@ def main():
             create_job(batch_v1, job, namespace)
             # @TODO move the file back if the create_job call fails
             print("INFO: Done with {}".format(filename), flush=True)
-            file_discovered_metrics.dec()
+            file_discovered_metrics.labels(get_job_type(), get_quality_level()).dec()
         time.sleep(10)
 
 
@@ -101,7 +109,7 @@ def get_encoding_profile():
 
 def get_quality_level():
     quality = get_config("QUALITY")  # expected as an env value only
-    if quality not in ['720p', '1080p']:
+    if quality not in ['720p', '1080p', '4k']:
         raise LookupError("Unexpected quality level value")
     return quality
 
