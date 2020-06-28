@@ -26,6 +26,8 @@ def main():
                                     labelnames=["type", "quality"])
     files_to_process_metrics = Gauge('handbrake_job_creator_files_to_process', 'Job Creator Found Some Files',
                                      labelnames=["type", "quality"])
+    job_creator_job_created = Gauge('handbrake_job_creator_job_created', 'Job Creator Created a Job',
+                                    labelnames=["type", "quality", "filename"])
     while True:
         dir = os.listdir(directory)
         files_to_process_metrics.labels(get_job_type(), get_quality_level()).set(len(dir))
@@ -68,6 +70,7 @@ def main():
             # @TODO move the file back if the create_job call fails
             print("INFO: Done with {}".format(filename), flush=True)
             file_discovered_metrics.labels(get_job_type(), get_quality_level()).dec()
+            job_creator_job_created.labels(get_job_type(), get_quality_level(), filename).set(1)
         time.sleep(10)
 
 
