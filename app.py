@@ -83,11 +83,11 @@ def get_container_version():
 
 
 def get_watch_path():
-    return get_config("WATCH_PATH")
+    return "/watch"
 
 
 def get_move_path():
-    return get_config("MOVE_PATH")
+    return "/move"
 
 
 def get_output_path():
