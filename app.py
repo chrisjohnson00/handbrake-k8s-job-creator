@@ -59,10 +59,11 @@ def main():
             file, extension = os.path.splitext(filename)
             job_suffix = cleanup_job_suffix(file)
             output_filename = filename
-            # @TODO make this configurable - if the 1080p job creator runs and i just want to re-encode a 1080p file
             #  (with 1080p in the name), it will rename it to 720p
-            if "1080p" in filename:
-                output_filename = filename.replace('1080p', '720p')
+            find_value = get_file_name_needle()
+            replace_value = get_file_name_replace_value()
+            if find_value and replace_value:
+                output_filename = filename.replace(find_value, replace_value)
             # truncate the job suffix to 48 characters to not exceed the 63 character limit
             job = create_job_object(job_suffix[:48], filename, output_filename, encoding_profile)
             batch_v1 = client.BatchV1Api()
@@ -100,6 +101,14 @@ def get_input_path():
 
 def get_job_type():
     return get_config("JOB_TYPE")
+
+
+def get_file_name_needle():
+    return get_config("FILE_NAME_REPLACE_NEEDLE")
+
+
+def get_file_name_replace_value():
+    return get_config("FILE_NAME_REPLACE_VALUE")
 
 
 def get_namespace():
