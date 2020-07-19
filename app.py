@@ -197,9 +197,11 @@ def create_job_object(name_suffix, input_filename, output_filename, encoding_pro
     )
     # Create and configurate a spec section
     template = client.V1PodTemplateSpec(
-        metadata=client.V1ObjectMeta(labels={"app": "handbrake-job"}, annotations={"prometheus.io/scrape": "true",
-                                                                                   "prometheus.io/path": "/metrics",
-                                                                                   "prometheus.io/port": "8080"}),
+        metadata=client.V1ObjectMeta(
+            labels={"app": "handbrake-job", "job-type": get_job_type(), "job-quality": get_quality_level()},
+            annotations={"prometheus.io/scrape": "true",
+                         "prometheus.io/path": "/metrics",
+                         "prometheus.io/port": "8080"}),
         spec=client.V1PodSpec(restart_policy="Never", containers=[container], volumes=[watch_volume, move_volume]))
     # Create the specification of deployment
     spec = client.V1JobSpec(
