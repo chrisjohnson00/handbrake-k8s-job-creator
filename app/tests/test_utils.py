@@ -13,4 +13,3 @@ def test_cleanup_job_suffix_period():
     expected_result = "thepantypiatapolarizationhdtv1080p"
     result = cleanup_job_suffix(input_with_period_character)
     assert result == expected_result
-

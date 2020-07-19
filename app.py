@@ -217,7 +217,7 @@ def create_job_object(name_suffix, input_filename, output_filename, encoding_pro
 
 
 def create_job(api_instance, job, namespace):
-    api_response = api_instance.create_namespaced_job(
+    api_instance.create_namespaced_job(
         body=job,
         namespace=namespace)
     print("INFO: {} - Job created.".format(datetime.now().strftime("%b %d %H:%M:%S")), flush=True)
