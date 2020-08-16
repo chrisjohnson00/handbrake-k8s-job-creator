@@ -57,19 +57,20 @@ def main():
                 flush=True)
             shutil.move(full_path, "{}/{}".format(move_path, filename))
             file, extension = os.path.splitext(filename)
-            job_suffix = cleanup_job_suffix(file)
-            output_filename = filename
-            #  (with 1080p in the name), it will rename it to 720p
-            find_value = get_file_name_needle()
-            replace_value = get_file_name_replace_value()
-            if find_value and replace_value:
-                output_filename = filename.replace(find_value, replace_value)
-            # truncate the job suffix to 48 characters to not exceed the 63 character limit
-            job = create_job_object(job_suffix[:48], filename, output_filename, encoding_profile)
             batch_v1 = client.BatchV1Api()
-            create_job(batch_v1, job, namespace)
-            # @TODO move the file back if the create_job call fails
-            print("INFO: Done with {}".format(filename), flush=True)
+            if job_exists(batch_v1,generate_job_name(file),namespace):
+                print("INFO: Done with {} did not create any new job".format(filename), flush=True)
+            else:
+                output_filename = filename
+                #  (with 1080p in the name), it will rename it to 720p
+                find_value = get_file_name_needle()
+                replace_value = get_file_name_replace_value()
+                if find_value and replace_value:
+                    output_filename = filename.replace(find_value, replace_value)
+                job = create_job_object(generate_job_name(file), filename, output_filename, encoding_profile)
+                create_job(batch_v1, job, namespace)
+                # @TODO move the file back if the create_job call fails
+                print("INFO: Done with {}".format(filename), flush=True)
             file_discovered_metrics.labels(get_job_type(), get_quality_level()).dec()
             job_creator_job_created.labels(get_job_type(), get_quality_level(), filename).set(1)
         time.sleep(10)
@@ -77,6 +78,12 @@ def main():
 
 def get_file_size(file):
     return os.stat(file).st_size
+
+
+def generate_job_name(filename):
+    job_suffix = cleanup_job_suffix(filename)
+    # truncate the job suffix to 48 characters to not exceed the 63 character limit
+    return job_suffix[:48]
 
 
 def get_container_version():
