@@ -223,10 +223,19 @@ def create_job_object(job_name, input_filename, output_filename, encoding_profil
 
 
 def create_job(api_instance, job, namespace):
-    api_response = api_instance.create_namespaced_job(
+    api_instance.create_namespaced_job(
         body=job,
         namespace=namespace)
     print("INFO: {} - Job created.".format(datetime.now().strftime("%b %d %H:%M:%S")), flush=True)
+
+
+def job_exists(api_instance, name, namespace):
+    try:
+        api_response = api_instance.read_namespaced_job(name, namespace)
+    except Exception as e:
+        print("Exception: {}" . e)
+        return False
+    return True
 
 
 if __name__ == '__main__':
