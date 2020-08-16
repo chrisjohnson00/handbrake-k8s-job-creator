@@ -58,7 +58,7 @@ def main():
             shutil.move(full_path, "{}/{}".format(move_path, filename))
             file, extension = os.path.splitext(filename)
             batch_v1 = client.BatchV1Api()
-            if job_exists(batch_v1,generate_job_name(file),namespace):
+            if job_exists(batch_v1, generate_job_name(file), namespace):
                 print("INFO: Done with {} did not create any new job".format(filename), flush=True)
             else:
                 output_filename = filename
@@ -83,7 +83,7 @@ def get_file_size(file):
 def generate_job_name(filename):
     job_suffix = cleanup_job_suffix(filename)
     # truncate the job suffix to 48 characters to not exceed the 63 character limit
-    return job_suffix[:48]
+    return "handbrake-job-{}".format(job_suffix[:48])
 
 
 def get_container_version():
@@ -161,9 +161,8 @@ def get_config(key, config_path=CONFIG_PATH):
     return data['Value'].decode("utf-8")
 
 
-def create_job_object(name_suffix, input_filename, output_filename, encoding_profile):
+def create_job_object(job_name, input_filename, output_filename, encoding_profile):
     # Configureate Pod template container
-    job_name = "handbrake-job-{}".format(name_suffix)
     container = client.V1Container(
         name=job_name,
         image="chrisjohnson00/handbrakecli:{}".format(get_container_version()),
