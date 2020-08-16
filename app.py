@@ -233,7 +233,7 @@ def job_exists(api_instance, name, namespace):
     try:
         api_instance.read_namespaced_job(name, namespace)
     except client.rest.ApiException as e:
-        print("Exception: {}".format(e))
+        print("ApiException encountered, got an HTTP status of: {}".format(e))
         return False
     return True
 
