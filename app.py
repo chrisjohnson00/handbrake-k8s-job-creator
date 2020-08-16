@@ -231,9 +231,9 @@ def create_job(api_instance, job, namespace):
 
 def job_exists(api_instance, name, namespace):
     try:
-        api_response = api_instance.read_namespaced_job(name, namespace)
+        api_instance.read_namespaced_job(name, namespace)
     except client.rest.ApiException as e:
-        print("Exception: {}" . e)
+        print("Exception: {}".format(e))
         return False
     return True
 
