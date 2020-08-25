@@ -98,6 +98,10 @@ def get_move_path():
     return "/move"
 
 
+def get_nfs_server():
+    return get_config("NFS_SERVER_IP")
+
+
 def get_output_path():
     return get_config("JOB_OUTPUT_PATH")
 
@@ -191,14 +195,16 @@ def create_job_object(job_name, input_filename, output_filename, encoding_profil
     )
     watch_volume = client.V1Volume(
         name="input",
-        host_path=client.V1HostPathVolumeSource(
-            path=get_input_path()
+        host_path=client.V1NFSVolumeSource(
+            path=get_input_path(),
+            server=get_nfs_server()
         )
     )
     move_volume = client.V1Volume(
         name="output",
-        host_path=client.V1HostPathVolumeSource(
-            path=get_output_path()
+        nfs=client.V1NFSVolumeSource(
+            path=get_output_path(),
+            server=get_nfs_server()
         )
     )
     # Create and configurate a spec section
