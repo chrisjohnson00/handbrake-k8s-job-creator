@@ -195,7 +195,7 @@ def create_job_object(job_name, input_filename, output_filename, encoding_profil
     )
     watch_volume = client.V1Volume(
         name="input",
-        host_path=client.V1NFSVolumeSource(
+        nfs=client.V1NFSVolumeSource(
             path=get_input_path(),
             server=get_nfs_server()
         )
