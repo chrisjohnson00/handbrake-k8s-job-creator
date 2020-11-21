@@ -50,6 +50,7 @@ def main():
                     flush=True)
                 file_size = get_file_size(full_path)
                 time.sleep(10)
+            # now move the file into the "encoding queue"
             print(
                 "INFO: {} - Moving '{}' to '{}/{}'".format(datetime.now().strftime("%b %d %H:%M:%S"), full_path,
                                                            move_path,
@@ -57,6 +58,7 @@ def main():
                 flush=True)
             shutil.move(full_path, "{}/{}".format(move_path, filename))
             file, extension = os.path.splitext(filename)
+            # create the encoding job
             batch_v1 = client.BatchV1Api()
             if job_exists(batch_v1, generate_job_name(file), namespace):
                 print("INFO: Done with {} did not create any new job".format(filename), flush=True)
