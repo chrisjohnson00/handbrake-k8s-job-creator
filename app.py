@@ -69,7 +69,8 @@ def main():
                 replace_value = get_file_name_replace_value()
                 if find_value and replace_value:
                     output_filename = filename.replace(find_value, replace_value)
-                job = create_job_object(generate_job_name(file), filename, output_filename, encoding_profile)
+                job = create_job_object(generate_job_name(file), filename, output_filename, encoding_profile,
+                                        file_size)
                 create_job(batch_v1, job, namespace)
                 # @TODO move the file back if the create_job call fails
                 print("INFO: Done with {}".format(filename), flush=True)
@@ -167,7 +168,7 @@ def get_config(key, config_path=CONFIG_PATH):
     return data['Value'].decode("utf-8")
 
 
-def create_job_object(job_name, input_filename, output_filename, encoding_profile):
+def create_job_object(job_name, input_filename, output_filename, encoding_profile, file_size):
     # Configureate Pod template container
     container = client.V1Container(
         name=job_name,
@@ -186,7 +187,8 @@ def create_job_object(job_name, input_filename, output_filename, encoding_profil
             )],
         resources=client.V1ResourceRequirements(
             limits={'cpu': get_job_resource_limit_cpu(), 'memory': get_job_resource_limit_memory()},
-            requests={'cpu': get_job_resource_request_cpu(), 'memory': get_job_resource_request_memory()}
+            requests={'cpu': get_job_resource_request_cpu(), 'memory': get_job_resource_request_memory(),
+                      'ephemeral-storage': file_size}
         ),
         env=[
             client.V1EnvVar(
