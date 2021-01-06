@@ -17,12 +17,8 @@ To use local config values, instead of consul, just export the config, for examp
 
     python -m pytest
 
-@TODO
+## Dependencies
 
- - make job creation failures and file moves atomic: move the file back if the create_job call fails
-
-Create a k8s cronjob which cleans up:
- - periodically run something like `kubectl delete pod --field-selector=status.phase=Succeeded -n handbrake-jobs` to get rid of completed pods from the list
- - periodically run something like `kubectl delete jobs -n handbrake-jobs  --field-selector=status.successful=1` to get rid of completed jobs
- 
- 
+ - https://pypi.org/project/kubernetes/
+ - https://pypi.org/project/prometheus-client/
+ - https://pypi.org/project/python-consul/
