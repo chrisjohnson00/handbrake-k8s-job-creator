@@ -93,10 +93,16 @@ def get_container_version():
     return get_config("JOB_CONTAINER_VERSION")
 
 
+##
+# @TODO Refactor get_watch_path so that it returns /watch if it exists otherwise /data/watch
+##
 def get_watch_path():
     return "/watch"
 
 
+##
+# @TODO Refactor get_move_path so that it returns /move if it exists otherwise /data/move
+##
 def get_move_path():
     return "/move"
 
