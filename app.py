@@ -174,7 +174,7 @@ def create_job_object(job_name, input_filename, output_filename, encoding_profil
         name=job_name,
         image="chrisjohnson00/handbrakecli:{}".format(get_container_version()),
         image_pull_policy=get_job_container_pull_policy(),
-        command=["./wrapper.py", "{}".format(input_filename), "{}".format(output_filename),
+        command=["python3", "/wrapper.py", "{}".format(input_filename), "{}".format(output_filename),
                  "{}".format(encoding_profile)],
         volume_mounts=[
             client.V1VolumeMount(
