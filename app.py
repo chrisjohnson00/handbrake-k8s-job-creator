@@ -62,6 +62,7 @@ def main():
             batch_v1 = client.BatchV1Api()
             if job_exists(batch_v1, generate_job_name(file), namespace):
                 print("INFO: Done with {} did not create any new job".format(filename), flush=True)
+                # @TODO remove the file from encoding_queue!
             else:
                 output_filename = filename
                 #  (with 1080p in the name), it will rename it to 720p
@@ -194,6 +195,10 @@ def create_job_object(job_name, input_filename, output_filename, encoding_profil
             client.V1EnvVar(
                 name="JOB_TYPE",
                 value=get_job_type()
+            ),
+            client.V1EnvVar(
+                name="CONSUL_HTTP_ADDR",
+                value=get_config('CONSUL_HTTP_ADDR')
             )
         ]
     )
