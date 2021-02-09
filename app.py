@@ -95,11 +95,11 @@ def get_container_version():
 
 
 def get_watch_path():
-    return "/watch"
+    return get_config("WATCH_PATH")
 
 
 def get_move_path():
-    return "/move"
+    return get_config("MOVE_PATH")
 
 
 def get_nfs_server():
