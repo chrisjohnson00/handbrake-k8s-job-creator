@@ -13,3 +13,10 @@ def test_cleanup_job_suffix_period():
     expected_result = "thepantypiatapolarizationhdtv1080p"
     result = cleanup_job_suffix(input_with_period_character)
     assert result == expected_result
+
+
+def test_cleanup_job_suffix_underscore():
+    input_with_bad_character = "The_Panty_Piata_Polarization_HDTV-1080p"
+    expected_result = "thepantypiatapolarizationhdtv1080p"
+    result = cleanup_job_suffix(input_with_bad_character)
+    assert result == expected_result
