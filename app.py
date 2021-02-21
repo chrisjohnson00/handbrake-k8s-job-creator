@@ -21,7 +21,6 @@ def main():
     directory = get_watch_path()
     move_path = get_move_path()
     namespace = get_namespace()
-    encoding_profile = get_encoding_profile()
     file_discovered_metrics = Gauge('handbrake_job_creator_files_in_process', 'Job Creator Found A File',
                                     labelnames=["type", "quality"])
     files_to_process_metrics = Gauge('handbrake_job_creator_files_to_process', 'Job Creator Found Some Files',
@@ -70,8 +69,7 @@ def main():
                 replace_value = get_file_name_replace_value()
                 if find_value and replace_value:
                     output_filename = filename.replace(find_value, replace_value)
-                job = create_job_object(generate_job_name(file), filename, output_filename, encoding_profile,
-                                        file_size)
+                job = create_job_object(generate_job_name(file), filename, output_filename, file_size)
                 create_job(batch_v1, job, namespace)
                 # @TODO move the file back if the create_job call fails
                 print("INFO: Done with {}".format(filename), flush=True)
@@ -130,10 +128,6 @@ def get_namespace():
     return get_config("JOB_NAMESPACE")  # expected as an env value only
 
 
-def get_encoding_profile():
-    return get_config("JOB_PROFILE")  # expected as an env value only
-
-
 def get_quality_level():
     quality = get_config("QUALITY")  # expected as an env value only
     if quality not in ['720p', '1080p', '4k']:
@@ -169,14 +163,13 @@ def get_config(key, config_path=CONFIG_PATH):
     return data['Value'].decode("utf-8")
 
 
-def create_job_object(job_name, input_filename, output_filename, encoding_profile, file_size):
+def create_job_object(job_name, input_filename, output_filename, file_size):
     # Configureate Pod template container
     container = client.V1Container(
         name=job_name,
         image="chrisjohnson00/handbrakecli:{}".format(get_container_version()),
         image_pull_policy=get_job_container_pull_policy(),
-        command=["python3", "/wrapper.py", "{}".format(input_filename), "{}".format(output_filename),
-                 "{}".format(encoding_profile)],
+        command=["python3", "/wrapper.py", "{}".format(input_filename), "{}".format(output_filename)],
         volume_mounts=[
             client.V1VolumeMount(
                 mount_path="/input",
