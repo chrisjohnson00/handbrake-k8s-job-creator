@@ -1,0 +1,70 @@
+name: 'CI'
+
+on:
+  push:
+    branches: ['**']
+
+env:
+  CONTAINER_NAME: 'handbrake-job-creator'
+
+jobs:
+  lint:
+    runs-on: 'ubuntu-20.04'
+    name: 'Python Lint'
+    steps:
+      - uses: 'actions/checkout@v2'
+      - uses: 'actions/setup-python@v2'
+        with:
+          python-version: '3.9'
+      - name: 'Install dependencies'
+        run: |
+          echo "Installing CI requirements"
+          pip install --upgrade --user pip flake8
+          echo "Installing project requirements"
+          pip install -r requirements.txt
+      - name: 'Flake8 :allthethings:'
+        run: 'python -m flake8'
+  test:
+    runs-on: 'ubuntu-20.04'
+    name: 'Python Tests'
+    steps:
+      - uses: 'actions/checkout@v2'
+      - uses: 'actions/setup-python@v2'
+        with:
+          python-version: '3.9'
+      - name: 'Install dependencies'
+        run: |
+          echo "Installing CI requirements"
+          pip install --upgrade --user pip pytest coverage
+          echo "Installing project requirements"
+          pip install -r requirements.txt
+      - name: 'Run tests'
+        run: 'python -m coverage run --branch --source=app -m pytest'
+      - name: 'Display coverage report'
+        run: 'python -m coverage report --fail-under 80 -m'
+  container_build:
+    needs: ['lint', 'test']
+    name: 'Build and Push Docker Container'
+    runs-on: 'ubuntu-20.04'
+    steps:
+      - uses: 'actions/checkout@v2'
+      - name: 'Build the Docker image'
+        run: 'docker build . -t chrisjohnson00/${CONTAINER_NAME}:${GITHUB_REF##*/}'
+      - name: 'Login to docker hub'
+        run: 'docker login --username=chrisjohnson00 --password=${{ secrets.DOCKER_HUB_PASSWORD }}'
+      - name: 'Push the Docker image'
+        run: 'docker push chrisjohnson00/${CONTAINER_NAME}:${GITHUB_REF##*/}'
+  actionslint:
+    name: 'Actions Yaml Lint'
+    runs-on: 'ubuntu-20.04'
+    steps:
+      - name: 'Checkout'
+        uses: 'actions/checkout@v2'
+      - name: 'Actions Yaml Lint'
+        uses: 'karancode/yamllint-github-action@v2.0.0'
+        with:
+          yamllint_file_or_dir: '.github/workflows'
+          yamllint_comment: 'true'
+          yamllint_config_datapath: '{"extends":"default","rules":{"line-length":{"max":360,"level":"warning"},"quoted-strings":{"quote-type":"single","required":true,"level":"error"},"truthy":{"check-keys":false},"document-start":{"present":false}}}'
+        env:
+          GITHUB_ACCESS_TOKEN: '${{ secrets.GITHUB_TOKEN }}'

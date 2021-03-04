@@ -1,0 +1,5 @@
+{
+  "action": "label",
+  "eventJsonPath": "$..[?(@.title.match(/^docs.*?/))].title",
+  "labels": "documentation"
+}

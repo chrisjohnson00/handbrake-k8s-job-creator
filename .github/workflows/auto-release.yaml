@@ -1,0 +1,54 @@
+name: 'Create Release'
+
+on:
+  push:
+    branches: ['main']
+
+jobs:
+  create_release:
+    runs-on: 'ubuntu-18.04'
+    name: 'Create Release'
+    steps:
+      - name: 'Checkout'
+        uses: 'actions/checkout@v2'
+        with:
+          fetch-depth: 0
+      - name: 'Get Latest Tag'
+        id: 'previoustag'
+        uses: 'WyriHaximus/github-action-get-previous-tag@1.0.0'
+      - name: 'Bump version and push tag'
+        id: 'tag_version'
+        uses: 'mathieudutour/github-tag-action@v5'
+        with:
+          github_token: '${{ secrets.PAT_REPO_ONLY }}'
+          release_branches: 'main'
+          default_bump: 'patch'
+      - name: 'Generate incremental changelog'
+        uses: 'charmixer/auto-changelog-action@v1.1'
+        with:
+          token: '${{ secrets.GITHUB_TOKEN }}'
+          release_branch: 'main'
+          since_tag: '${{ steps.previoustag.outputs.tag }}'
+          output: 'release.md'
+      - name: 'Read incremental changelog'
+        id: 'changelog'
+        uses: 'juliangruber/read-file-action@v1'
+        with:
+          path: './release.md'
+      - name: 'Create a GitHub release'
+        uses: 'actions/create-release@v1'
+        env:
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+        with:
+          tag_name: '${{ steps.tag_version.outputs.new_tag }}'
+          release_name: '${{ steps.tag_version.outputs.new_tag }}'
+          body: '${{ steps.changelog.outputs.content }}'
+      - name: 'Generate changelog'
+        uses: 'charmixer/auto-changelog-action@v1.1'
+        with:
+          token: '${{ secrets.GITHUB_TOKEN }}'
+          release_branch: 'main'
+      - uses: 'stefanzweifel/git-auto-commit-action@v4'
+        with:
+          commit_message: 'chore: Generating CHANGELOG.md for ${{ steps.tag_version.outputs.new_tag }}'
+          file_pattern: 'CHANGELOG.md'
