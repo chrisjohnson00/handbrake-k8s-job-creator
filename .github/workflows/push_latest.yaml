@@ -1,0 +1,21 @@
+name: 'Push Latest Tag'
+
+on:
+  push:
+    tags:
+      - 'v**'
+
+env:
+  CONTAINER_NAME: 'handbrake-job-creator'
+
+jobs:
+  push_latest:
+    runs-on: 'ubuntu-18.04'
+    steps:
+      - uses: 'actions/checkout@v2'
+      - name: 'Build the Docker image'
+        run: 'docker build . -t chrisjohnson00/${CONTAINER_NAME}:latest'
+      - name: 'Login to docker hub'
+        run: 'docker login --username=chrisjohnson00 --password=${{ secrets.DOCKER_HUB_PASSWORD }}'
+      - name: 'Push the Docker image'
+        run: 'docker push chrisjohnson00/${CONTAINER_NAME}:latest'
