@@ -1,5 +1,13 @@
 # Changelog
 
+## [v3.1.1](https://github.com/chrisjohnson00/handbrake-k8s-job-creator/tree/v3.1.1) (2021-04-08)
+
+[Full Changelog](https://github.com/chrisjohnson00/handbrake-k8s-job-creator/compare/v3.1.0...v3.1.1)
+
+**Fixed bugs:**
+
+- fix: pattern substitution for non alphanumeric characters in file names [\#94](https://github.com/chrisjohnson00/handbrake-k8s-job-creator/pull/94) ([chrisjohnson00](https://github.com/chrisjohnson00))
+
 ## [v3.1.0](https://github.com/chrisjohnson00/handbrake-k8s-job-creator/tree/v3.1.0) (2021-03-04)
 
 [Full Changelog](https://github.com/chrisjohnson00/handbrake-k8s-job-creator/compare/v3.0.2...v3.1.0)
@@ -14,7 +22,6 @@
 
 **Merged pull requests:**
 
-- fix: Adding storage requests to avoid scheduling to a constrained node [\#44](https://github.com/chrisjohnson00/handbrake-k8s-job-creator/pull/44) ([chrisjohnson00](https://github.com/chrisjohnson00))
 - Bump requests from 2.25.0 to 2.25.1 [\#41](https://github.com/chrisjohnson00/handbrake-k8s-job-creator/pull/41) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump pytest from 6.1.2 to 6.2.1 [\#40](https://github.com/chrisjohnson00/handbrake-k8s-job-creator/pull/40) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump google-auth from 1.23.0 to 1.24.0 [\#39](https://github.com/chrisjohnson00/handbrake-k8s-job-creator/pull/39) ([dependabot[bot]](https://github.com/apps/dependabot))
