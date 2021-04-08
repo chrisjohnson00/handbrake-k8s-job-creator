@@ -8,6 +8,13 @@ def test_cleanup_job_suffix_accents():
     assert result == expected_result
 
 
+def test_cleanup_job_suffix_accents_2():
+    input_with_accent_character = "The Man in the High Castle - S03E03 - Sensō Kōi WEBDL-1080p Proper REAL"
+    expected_result = "themaninthehighcastles03e03senskiwebdl1080pproperreal"
+    result = cleanup_job_suffix(input_with_accent_character)
+    assert result == expected_result
+
+
 def test_cleanup_job_suffix_period():
     input_with_period_character = "The.Panty.Piata.Polarization.HDTV-1080p"
     expected_result = "thepantypiatapolarizationhdtv1080p"
