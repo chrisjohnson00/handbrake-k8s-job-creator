@@ -1,9 +1,7 @@
-import re
+from string import ascii_letters, digits
 
 
 def cleanup_job_suffix(input_string):
-    # keep only word character, removing all non-word chars
-    job_suffix = re.sub(r"\W", "", input_string.lower(), flags=re.I)
-    job_suffix = re.sub(r"[à-ú]|[À-Ú]", "", job_suffix, flags=re.I)
-    job_suffix = job_suffix.replace("_", "")
-    return job_suffix
+    # keep only a-z and 0-9
+    job_suffix = "".join([ch for ch in input_string if ch in (ascii_letters + digits)])
+    return job_suffix.lower()
