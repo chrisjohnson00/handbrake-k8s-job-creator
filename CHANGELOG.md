@@ -1,5 +1,14 @@
 # Changelog
 
+## [v3.2.1](https://github.com/chrisjohnson00/handbrake-k8s-job-creator/tree/v3.2.1) (2021-07-05)
+
+[Full Changelog](https://github.com/chrisjohnson00/handbrake-k8s-job-creator/compare/v3.2.0...v3.2.1)
+
+**Merged pull requests:**
+
+- chore: dependabot should PR to main [\#133](https://github.com/chrisjohnson00/handbrake-k8s-job-creator/pull/133) ([chrisjohnson00](https://github.com/chrisjohnson00))
+- chore: bump urllib3 from 1.26.4 to 1.26.5 [\#122](https://github.com/chrisjohnson00/handbrake-k8s-job-creator/pull/122) ([dependabot[bot]](https://github.com/apps/dependabot))
+
 ## [v3.2.0](https://github.com/chrisjohnson00/handbrake-k8s-job-creator/tree/v3.2.0) (2021-07-05)
 
 [Full Changelog](https://github.com/chrisjohnson00/handbrake-k8s-job-creator/compare/v3.1.2...v3.2.0)
