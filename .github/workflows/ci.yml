@@ -3,19 +3,16 @@ name: 'CI'
 on:
   push:
     branches: ['**']
-
-env:
-  CONTAINER_NAME: 'handbrake-job-creator'
+    tags: ['**']
 
 jobs:
   lint:
     runs-on: 'ubuntu-20.04'
     name: 'Python Lint'
+    container:
+      image: 'python:3.9.2-slim'
     steps:
       - uses: 'actions/checkout@v2'
-      - uses: 'actions/setup-python@v2.2.2'
-        with:
-          python-version: '3.9'
       - name: 'Install dependencies'
         run: |
           echo "Installing CI requirements"
@@ -23,48 +20,110 @@ jobs:
           echo "Installing project requirements"
           pip install -r requirements.txt
       - name: 'Flake8 :allthethings:'
-        run: 'python -m flake8'
-  test:
+        run: |
+          python -m flake8 --exclude venv --max-line-length 120
+  container_build:
+    needs: ['lint', 'test']
+    name: 'Build and Push Docker Container'
     runs-on: 'ubuntu-20.04'
-    name: 'Python Tests'
+    if: |
+      !contains(github.ref, 'dependabot')
     steps:
       - uses: 'actions/checkout@v2'
-      - uses: 'actions/setup-python@v2.2.2'
+      - name: 'Get calculated next version based on commit history'
+        id: 'calculated-next-version'
+        uses: 'mathieudutour/github-tag-action@v5.5'
+        with:
+          github_token: '${{ secrets.GITHUB_TOKEN }}'
+          release_branches: 'main'
+          default_bump: 'patch'
+          dry_run: 'true'
+          append_to_pre_release_tag: 'rc-${{ github.run_id }}'
+          pre_release_branches: '^((main(?!$)).+|(?!main).+)$'
+      - name: 'Prepare'
+        id: 'prep'
+        run: |
+          DOCKER_IMAGE=${{ github.repository }}
+          VERSION=edge
+          if [[ $GITHUB_REF == refs/tags/* ]]; then
+            VERSION=${GITHUB_REF#refs/tags/}
+          fi
+          if [[ $GITHUB_REF == refs/heads/* ]]; then
+            VERSION=${GITHUB_REF#refs/heads/}
+            if [[ $VERSION == main ]]; then
+              VERSION=latest
+            else
+              VERSION=${{ steps.calculated-next-version.outputs.new_tag }}
+            fi
+          fi
+          TAGS="${DOCKER_IMAGE}:${VERSION//\//-}"
+          echo ::set-output name=tags::${TAGS}
+          echo ::set-output name=cache_from::${TAGS}
+          echo ::set-output name=version::${VERSION//\//-}
+          echo ::set-output name=cache_version::${VERSION//\//-}
+      - name: 'Setup Docker Buildx'
+        uses: 'docker/setup-buildx-action@v1'
+      - name: 'Cache Docker layers'
+        uses: 'actions/cache@v2.1.6'
+        with:
+          path: '/tmp/.buildx-cache'
+          key: '${{ runner.os }}-buildx-${{ github.sha }}'
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+      - name: 'Login to DockerHub'
+        uses: 'docker/login-action@v1'
+        with:
+          username: 'chrisjohnson00'
+          password: '${{ secrets.DOCKER_HUB_PASSWORD }}'
+      - name: 'Build and push'
+        id: 'docker_build'
+        uses: 'docker/build-push-action@v2'
+        with:
+          context: '.'
+          file: './Dockerfile'
+          # ensure latest base image is used
+          pull: 'true'
+          # publish
+          push: 'true'
+          # tags determined by prep step
+          tags: '${{ steps.prep.outputs.tags }}'
+          cache-from: 'type=local,src=/tmp/.buildx-cache'
+          cache-to: 'type=local,dest=/tmp/.buildx-cache'
+          labels: |
+            org.opencontainers.image.documentation=https://github.com/${{ github.repository }}
+            org.opencontainers.image.version=${{ steps.prep.outputs.version }}
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
+  yaml_lint:
+    name: 'Yaml Lint'
+    runs-on: 'ubuntu-20.04'
+    steps:
+      - name: 'Checkout'
+        uses: 'actions/checkout@v2'
+      - name: 'Yaml Lint'
+        uses: 'karancode/yamllint-github-action@v2.0.0'
+        with:
+          yamllint_comment: 'true'
+          yamllint_config_datapath: '{"extends":"default","rules":{"line-length":{"max":360,"level":"warning"},"truthy":{"check-keys":false},"document-start":{"present":false}}}'
+        env:
+          GITHUB_ACCESS_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+  test:
+    name: 'Test'
+    runs-on: 'ubuntu-20.04'
+    steps:
+      - uses: 'actions/checkout@v2'
+      - uses: 'actions/setup-python@v2'
         with:
           python-version: '3.9'
       - name: 'Install dependencies'
         run: |
           echo "Installing CI requirements"
-          pip install --upgrade --user pip pytest coverage
+          pip install --upgrade --user pip pytest coverage pyfakefs
           echo "Installing project requirements"
           pip install -r requirements.txt
       - name: 'Run tests'
-        run: 'python -m coverage run --branch --source=app -m pytest'
+        run: 'python -m coverage run --branch -m pytest'
       - name: 'Display coverage report'
-        run: 'python -m coverage report --fail-under 80 -m'
-  container_build:
-    needs: ['lint', 'test']
-    name: 'Build and Push Docker Container'
-    runs-on: 'ubuntu-20.04'
-    steps:
-      - uses: 'actions/checkout@v2'
-      - name: 'Build the Docker image'
-        run: 'docker build . -t chrisjohnson00/${CONTAINER_NAME}:${GITHUB_REF##*/}'
-      - name: 'Login to docker hub'
-        run: 'docker login --username=chrisjohnson00 --password=${{ secrets.DOCKER_HUB_PASSWORD }}'
-      - name: 'Push the Docker image'
-        run: 'docker push chrisjohnson00/${CONTAINER_NAME}:${GITHUB_REF##*/}'
-  actionslint:
-    name: 'Actions Yaml Lint'
-    runs-on: 'ubuntu-20.04'
-    steps:
-      - name: 'Checkout'
-        uses: 'actions/checkout@v2'
-      - name: 'Actions Yaml Lint'
-        uses: 'karancode/yamllint-github-action@v2.0.0'
-        with:
-          yamllint_file_or_dir: '.github/workflows'
-          yamllint_comment: 'true'
-          yamllint_config_datapath: '{"extends":"default","rules":{"line-length":{"max":360,"level":"warning"},"quoted-strings":{"quote-type":"single","required":true,"level":"error"},"truthy":{"check-keys":false},"document-start":{"present":false}}}'
-        env:
-          GITHUB_ACCESS_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+        run: |
+          python -m coverage report --fail-under=80 \
+          --omit="*/.local/*","*/tests/test_*" -m
