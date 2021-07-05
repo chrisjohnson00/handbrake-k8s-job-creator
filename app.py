@@ -192,6 +192,10 @@ def create_job_object(job_name, input_filename, output_filename, file_size):
             client.V1EnvVar(
                 name="CONSUL_HTTP_ADDR",
                 value=get_config('CONSUL_HTTP_ADDR')
+            ),
+            client.V1EnvVar(
+                name="SCHEDULED_NODE",
+                value_from=client.V1EnvVarSource(field_ref=client.V1ObjectFieldSelector(field_path="spec.nodeName"))
             )
         ]
     )
