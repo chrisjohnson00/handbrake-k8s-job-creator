@@ -1,5 +1,13 @@
 # Changelog
 
+## [v3.2.0](https://github.com/chrisjohnson00/handbrake-k8s-job-creator/tree/v3.2.0) (2021-07-05)
+
+[Full Changelog](https://github.com/chrisjohnson00/handbrake-k8s-job-creator/compare/v3.1.2...v3.2.0)
+
+**Implemented enhancements:**
+
+- feat: adding node environment variable for node based metrics [\#132](https://github.com/chrisjohnson00/handbrake-k8s-job-creator/pull/132) ([chrisjohnson00](https://github.com/chrisjohnson00))
+
 ## [v3.1.2](https://github.com/chrisjohnson00/handbrake-k8s-job-creator/tree/v3.1.2) (2021-04-08)
 
 [Full Changelog](https://github.com/chrisjohnson00/handbrake-k8s-job-creator/compare/v3.1.1...v3.1.2)
