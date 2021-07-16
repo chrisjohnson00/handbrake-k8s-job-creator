@@ -22,4 +22,4 @@ To use local config values, instead of consul, just export the config, for examp
     pip install --upgrade pip
     pip install --upgrade pygogo python-consul kubernetes prometheus-client
     pip freeze > requirements.txt
-    sed -i '/pkg-resources/d' requirements.txt
+    sed -i '/pkg_resources/d' requirements.txt
