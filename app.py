@@ -21,6 +21,7 @@ def main():
     directory = get_watch_path()
     move_path = get_move_path()
     namespace = get_namespace()
+    sleep_time_seconds = get_sleep_time()
     file_discovered_metrics = Gauge('handbrake_job_creator_files_in_process', 'Job Creator Found A File',
                                     labelnames=["type", "quality"])
     files_to_process_metrics = Gauge('handbrake_job_creator_files_to_process', 'Job Creator Found Some Files',
@@ -41,14 +42,14 @@ def main():
                                                                    file_size),
                 flush=True)
             file_discovered_metrics.labels(get_job_type(), get_quality_level()).inc()
-            time.sleep(10)
+            time.sleep(sleep_time_seconds)
             # loop until the file size stops growing
             while file_size != get_file_size(full_path):
                 print(
                     "INFO: {} - File is still growing, waiting".format(datetime.now().strftime("%b %d %H:%M:%S")),
                     flush=True)
                 file_size = get_file_size(full_path)
-                time.sleep(10)
+                time.sleep(sleep_time_seconds)
             # now move the file into the "encoding queue"
             print(
                 "INFO: {} - Moving '{}' to '{}/{}'".format(datetime.now().strftime("%b %d %H:%M:%S"), full_path,
@@ -75,7 +76,7 @@ def main():
                 print("INFO: Done with {}".format(filename), flush=True)
             file_discovered_metrics.labels(get_job_type(), get_quality_level()).dec()
             job_creator_job_created.labels(get_job_type(), get_quality_level(), filename).set(1)
-        time.sleep(10)
+        time.sleep(sleep_time_seconds)
 
 
 def get_file_size(file):
@@ -153,6 +154,12 @@ def get_job_resource_limit_memory():
 
 def get_job_container_pull_policy():
     return get_config("JOB_CONTAINER_PULL_POLICY")
+
+
+def get_sleep_time():
+    if os.environ.get("SLEEP_TIME"):
+        return int(os.environ.get("SLEEP_TIME"))
+    return 10
 
 
 def get_config(key, config_path=CONFIG_PATH):
