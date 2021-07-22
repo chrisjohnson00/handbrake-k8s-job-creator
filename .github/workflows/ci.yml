@@ -32,7 +32,7 @@ jobs:
       - uses: 'actions/checkout@v2'
       - name: 'Get calculated next version based on commit history'
         id: 'calculated-next-version'
-        uses: 'mathieudutour/github-tag-action@v5.5'
+        uses: 'mathieudutour/github-tag-action@v5.6'
         with:
           github_token: '${{ secrets.GITHUB_TOKEN }}'
           release_branches: 'main'
