@@ -1,5 +1,17 @@
 # Changelog
 
+## [v3.2.2](https://github.com/chrisjohnson00/handbrake-k8s-job-creator/tree/v3.2.2) (2021-08-15)
+
+[Full Changelog](https://github.com/chrisjohnson00/handbrake-k8s-job-creator/compare/v3.2.1...v3.2.2)
+
+**Fixed bugs:**
+
+- fix: externalizing the sleep time for scan loops [\#148](https://github.com/chrisjohnson00/handbrake-k8s-job-creator/pull/148) ([chrisjohnson00](https://github.com/chrisjohnson00))
+
+**Merged pull requests:**
+
+- ci: updating ci workflow to my latest version [\#134](https://github.com/chrisjohnson00/handbrake-k8s-job-creator/pull/134) ([chrisjohnson00](https://github.com/chrisjohnson00))
+
 ## [v3.2.1](https://github.com/chrisjohnson00/handbrake-k8s-job-creator/tree/v3.2.1) (2021-07-05)
 
 [Full Changelog](https://github.com/chrisjohnson00/handbrake-k8s-job-creator/compare/v3.2.0...v3.2.1)
