@@ -5,7 +5,7 @@ google-auth==1.34.0
 idna==3.2
 kubernetes==17.17.0
 oauthlib==3.1.1
-prometheus-client==0.11.0
+prometheus-client==0.13.0
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
 pygogo==0.13.2
