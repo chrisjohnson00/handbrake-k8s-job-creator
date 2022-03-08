@@ -1,5 +1,18 @@
 # Changelog
 
+## [v3.2.3](https://github.com/chrisjohnson00/handbrake-k8s-job-creator/tree/v3.2.3) (2022-03-08)
+
+[Full Changelog](https://github.com/chrisjohnson00/handbrake-k8s-job-creator/compare/v3.2.2...v3.2.3)
+
+**Fixed bugs:**
+
+- fix: creating the job with 2x the file size to account for input/output files [\#209](https://github.com/chrisjohnson00/handbrake-k8s-job-creator/pull/209) ([chrisjohnson00](https://github.com/chrisjohnson00))
+
+**Merged pull requests:**
+
+- chore: bump mathieudutour/github-tag-action from 5.5 to 5.6 [\#143](https://github.com/chrisjohnson00/handbrake-k8s-job-creator/pull/143) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore: bump wagoid/commitlint-github-action from 3.1.4 to 4.1.1 [\#141](https://github.com/chrisjohnson00/handbrake-k8s-job-creator/pull/141) ([dependabot[bot]](https://github.com/apps/dependabot))
+
 ## [v3.2.2](https://github.com/chrisjohnson00/handbrake-k8s-job-creator/tree/v3.2.2) (2021-08-15)
 
 [Full Changelog](https://github.com/chrisjohnson00/handbrake-k8s-job-creator/compare/v3.2.1...v3.2.2)
