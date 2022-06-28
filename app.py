@@ -70,8 +70,8 @@ def main():
                 replace_value = get_file_name_replace_value()
                 if find_value and replace_value:
                     output_filename = filename.replace(find_value, replace_value)
-                # 2x file size to account for copying into the container, and encoding inside the container
-                job = create_job_object(generate_job_name(file), filename, output_filename, (file_size * 2))
+                # 3x file size to account for copying into the container, encoding inside the container, and other stuff
+                job = create_job_object(generate_job_name(file), filename, output_filename, (file_size * 3))
                 create_job(batch_v1, job, namespace)
                 # @TODO move the file back if the create_job call fails
                 print("INFO: Done with {}".format(filename), flush=True)
@@ -171,7 +171,7 @@ def get_config(key, config_path=CONFIG_PATH):
     return data['Value'].decode("utf-8")
 
 
-def create_job_object(job_name, input_filename, output_filename, file_size):
+def create_job_object(job_name, input_filename, output_filename, ephemeral_file_size):
     # Configureate Pod template container
     container = client.V1Container(
         name=job_name,
@@ -179,18 +179,16 @@ def create_job_object(job_name, input_filename, output_filename, file_size):
         image_pull_policy=get_job_container_pull_policy(),
         command=["python3", "/wrapper.py", "{}".format(input_filename), "{}".format(output_filename)],
         volume_mounts=[
-            client.V1VolumeMount(
-                mount_path="/input",
-                name="input"
-            ),
-            client.V1VolumeMount(
-                mount_path="/output",
-                name="output"
-            )],
+            client.V1VolumeMount(mount_path="/input", name="input"),
+            client.V1VolumeMount(mount_path="/output", name="output"),
+            client.V1VolumeMount(mount_path='/encode_in', name='encode-in'),
+            client.V1VolumeMount(mount_path='/encode_out', name='encode-out')
+        ],
         resources=client.V1ResourceRequirements(
-            limits={'cpu': get_job_resource_limit_cpu(), 'memory': get_job_resource_limit_memory()},
+            limits={'cpu': get_job_resource_limit_cpu(), 'memory': get_job_resource_limit_memory(),
+                    'ephemeral-storage': ephemeral_file_size},
             requests={'cpu': get_job_resource_request_cpu(), 'memory': get_job_resource_request_memory(),
-                      'ephemeral-storage': file_size}
+                      'ephemeral-storage': ephemeral_file_size}
         ),
         env=[
             client.V1EnvVar(
@@ -221,6 +219,8 @@ def create_job_object(job_name, input_filename, output_filename, file_size):
             server=get_nfs_server()
         )
     )
+    emptydir_volume_in = client.V1Volume(name="encode-in", empty_dir=client.V1EmptyDirVolumeSource())
+    emptydir_volume_out = client.V1Volume(name="encode-out", empty_dir=client.V1EmptyDirVolumeSource())
     # Create and configurate a spec section
     template = client.V1PodTemplateSpec(
         metadata=client.V1ObjectMeta(
@@ -228,7 +228,8 @@ def create_job_object(job_name, input_filename, output_filename, file_size):
             annotations={"prometheus.io/scrape": "true",
                          "prometheus.io/path": "/metrics",
                          "prometheus.io/port": "8080"}),
-        spec=client.V1PodSpec(restart_policy="Never", containers=[container], volumes=[watch_volume, move_volume]))
+        spec=client.V1PodSpec(restart_policy="Never", containers=[container],
+                              volumes=[watch_volume, move_volume, emptydir_volume_in, emptydir_volume_out]))
     # Create the specification of deployment
     spec = client.V1JobSpec(
         template=template)
