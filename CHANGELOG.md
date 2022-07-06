@@ -1,5 +1,13 @@
 # Changelog
 
+## [v3.2.4](https://github.com/chrisjohnson00/handbrake-k8s-job-creator/tree/v3.2.4) (2022-07-06)
+
+[Full Changelog](https://github.com/chrisjohnson00/handbrake-k8s-job-creator/compare/v3.2.3...v3.2.4)
+
+**Fixed bugs:**
+
+- fix: storage request improvements [\#247](https://github.com/chrisjohnson00/handbrake-k8s-job-creator/pull/247) ([chrisjohnson00](https://github.com/chrisjohnson00))
+
 ## [v3.2.3](https://github.com/chrisjohnson00/handbrake-k8s-job-creator/tree/v3.2.3) (2022-03-08)
 
 [Full Changelog](https://github.com/chrisjohnson00/handbrake-k8s-job-creator/compare/v3.2.2...v3.2.3)
