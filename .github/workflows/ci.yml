@@ -12,7 +12,7 @@ jobs:
     container:
       image: 'python:3.9.2-slim'
     steps:
-      - uses: 'actions/checkout@v2'
+      - uses: 'actions/checkout@v3'
       - name: 'Install dependencies'
         run: |
           echo "Installing CI requirements"
@@ -29,7 +29,7 @@ jobs:
     if: |
       !contains(github.ref, 'dependabot')
     steps:
-      - uses: 'actions/checkout@v2'
+      - uses: 'actions/checkout@v3'
       - name: 'Get calculated next version based on commit history'
         id: 'calculated-next-version'
         uses: 'mathieudutour/github-tag-action@v6.0'
@@ -99,7 +99,7 @@ jobs:
     runs-on: 'ubuntu-20.04'
     steps:
       - name: 'Checkout'
-        uses: 'actions/checkout@v2'
+        uses: 'actions/checkout@v3'
       - name: 'Yaml Lint'
         uses: 'karancode/yamllint-github-action@v2.0.0'
         with:
@@ -111,7 +111,7 @@ jobs:
     name: 'Test'
     runs-on: 'ubuntu-20.04'
     steps:
-      - uses: 'actions/checkout@v2'
+      - uses: 'actions/checkout@v3'
       - uses: 'actions/setup-python@v4'
         with:
           python-version: '3.9'

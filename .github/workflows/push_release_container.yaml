@@ -11,7 +11,7 @@ jobs:
   build_container:
     runs-on: 'ubuntu-18.04'
     steps:
-      - uses: 'actions/checkout@v2'
+      - uses: 'actions/checkout@v3'
       - name: 'Build the Docker image'
         run: 'docker build . -t chrisjohnson00/${CONTAINER_NAME}:${GITHUB_REF##*/}'
       - name: 'Login to docker hub'
