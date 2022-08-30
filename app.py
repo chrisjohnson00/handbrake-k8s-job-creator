@@ -70,8 +70,8 @@ def main():
                 replace_value = get_file_name_replace_value()
                 if find_value and replace_value:
                     output_filename = filename.replace(find_value, replace_value)
-                # 2x file size to account for copying into the container and encoding inside the container
-                job = create_job_object(generate_job_name(file), filename, output_filename, (file_size * 2))
+                # 2.5x file size to account for copying into the container, encoding the file and other storage needs
+                job = create_job_object(generate_job_name(file), filename, output_filename, (file_size * 2.5))
                 create_job(batch_v1, job, namespace)
                 # @TODO move the file back if the create_job call fails
                 print("INFO: Done with {}".format(filename), flush=True)
