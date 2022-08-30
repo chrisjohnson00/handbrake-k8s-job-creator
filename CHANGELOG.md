@@ -1,5 +1,13 @@
 # Changelog
 
+## [v3.2.6](https://github.com/chrisjohnson00/handbrake-k8s-job-creator/tree/v3.2.6) (2022-08-30)
+
+[Full Changelog](https://github.com/chrisjohnson00/handbrake-k8s-job-creator/compare/v3.2.5...v3.2.6)
+
+**Fixed bugs:**
+
+- fix: 2x seems to cause some failures [\#268](https://github.com/chrisjohnson00/handbrake-k8s-job-creator/pull/268) ([chrisjohnson00](https://github.com/chrisjohnson00))
+
 ## [v3.2.5](https://github.com/chrisjohnson00/handbrake-k8s-job-creator/tree/v3.2.5) (2022-08-24)
 
 [Full Changelog](https://github.com/chrisjohnson00/handbrake-k8s-job-creator/compare/v3.2.4...v3.2.5)
