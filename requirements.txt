@@ -1,6 +1,6 @@
 cachetools==5.2.0
 certifi==2022.6.15
-charset-normalizer==2.0.12
+charset-normalizer==3.0.0
 google-auth==2.8.0
 idna==3.3
 kubernetes==24.2.0
