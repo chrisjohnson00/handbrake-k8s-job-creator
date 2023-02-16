@@ -3,7 +3,7 @@ certifi==2022.6.15
 charset-normalizer==2.0.12
 google-auth==2.8.0
 idna==3.3
-kubernetes==24.2.0
+kubernetes==26.1.0
 oauthlib==3.2.0
 prometheus-client==0.14.1
 pyasn1==0.4.8
